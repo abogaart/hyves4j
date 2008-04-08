@@ -1,0 +1,18 @@
+hyves.consumerKey: MTEzN19mHCF2ZbnbIc2b-pLh6OnY
+hyves.consumerSecret: MTEzN19vdDIHtjY_qawhSdij1Ybz
+hyves.callbackURL: http://localhost:8080/site/2008/admin/hyves/callback
+
+# There can be more consumer properties.
+hyves.serviceProvider.requestTokenURL: http://data.hyves-api.nl/
+hyves.serviceProvider.userAuthorizationURL: http://www.hyves.nl/api/authorize/
+hyves.serviceProvider.accessTokenURL: http://data.hyves-api.nl/
+
+hyves2.consumerKey: MTYxX62UFay_Xjel8ZJK7bJF520=TESTVALUE
+hyves2.consumerSecret: MTYxX9U69kijcNMdojksH_1-DWE=TESTVALUE
+hyves2.callbackURL: http://localhost:8080/site/2008/admin/hyves/callbackTESTVALUE
+#hyves.consumer.oauth_signature_method: HMAC_SHA1
+
+# There can be more consumer properties.
+hyves2.serviceProvider.requestTokenURL: http://data.hyves-api.nl/TESTVALUE
+hyves2.serviceProvider.userAuthorizationURL: http://www.hyves.nl/api/authorize/TESTVALUE
+hyves2.serviceProvider.accessTokenURL: http://data.hyves-api.nl/TESTVALUE
