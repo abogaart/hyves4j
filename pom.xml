@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.spikylee.hyves4j</groupId>
+  <artifactId>hyves4j-api</artifactId>
+  <version>1.01.00-SNAPSHOT</version>
+  
+  <name>Hyves for Java API</name>
+  <description>An api that wraps the logic and complexity of HttpRequests to the Hyves API. Based on OAuth.net</description>
+  <packaging>pom</packaging>
+  
+  <url>http://code.google.com/p/hyves4j/</url>
+  <inceptionYear>2008</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <connection>scm:svn:http://hyves4j.googlecode.com/svn/trunk</connection>
+    <developerConnection>scm:svn:https://hyves4j.googlecode.com/svn/trunk</developerConnection>
+    <url>http://code.google.com/p/hyves4j/source/browse</url>
+  </scm>
+  
+  <modules>
+    <module>core</module>
+    <module>example</module>
+  </modules>
+  
+  <properties>
+    <oauth.version>20080229</oauth.version>
+    <lb.version>0.9.8</lb.version>
+    <junit.version>3.8.1</junit.version>
+  </properties>
+  
+  <developers>
+    <developer>
+      <name>Arthur Bogaart</name>
+      <id>spikylee</id>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>net.oauth</groupId>
+        <artifactId>core</artifactId>
+        <version>${oauth.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${lb.version}</version>
+        <scope>compile</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-access</artifactId>
+        <version>${lb.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      
+      <dependency>
+        <artifactId>junit</artifactId>
+        <groupId>junit</groupId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+<!--  <reporting>
+    <outputDirectory>target/site</outputDirectory>
+    <plugins>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <source>1.5</source>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://trac.hyves-api.nl/hyves-api/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+-->  
+</project>
