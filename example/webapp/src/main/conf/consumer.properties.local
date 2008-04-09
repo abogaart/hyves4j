@@ -1,0 +1,8 @@
+hyves.consumerKey: MTI1MF8sQYNip6ex-rWGPa97B_1W
+hyves.consumerSecret: MTI1MF_wm0CfvO4tr7OIVl5wa5Pa
+hyves.callbackURL: http://localhost:8080/Example/request
+#hyves.consumer.oauth_signature_method: HMAC_SHA1
+
+hyves.serviceProvider.requestTokenURL: http://data.hyves-api.nl/
+hyves.serviceProvider.userAuthorizationURL: http://www.hyves.nl/api/authorize/
+hyves.serviceProvider.accessTokenURL: http://data.hyves-api.nl/
