@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008 Arthur Bogaart <spikylee at gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.spikylee.hyves4j.model;
 
 import java.io.Serializable;
@@ -107,44 +123,12 @@ public class User implements Serializable {
 	public void setCountryId(String countryId) {
 		this.countryId = countryId;
 	}
+	
 	public Date getCreated() {
 		return created;
 	}
 	public void setCreated(Date created) {
 		this.created = created;
-	}
-	
-	final public class Birthday implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private int day;
-		private int month;
-		private int year;
-		private int age;
-		public int getDay() {
-			return day;
-		}
-		public void setDay(int day) {
-			this.day = day;
-		}
-		public int getMonth() {
-			return month;
-		}
-		public void setMonth(int month) {
-			this.month = month;
-		}
-		public int getYear() {
-			return year;
-		}
-		public void setYear(int year) {
-			this.year = year;
-		}
-		public int getAge() {
-			return age;
-		}
-		public void setAge(int age) {
-			this.age = age;
-		}
 	}
 
 	public City getCity() {
@@ -163,4 +147,36 @@ public class User implements Serializable {
         this.profilePicture = profilePicture;
     }
 
+    final public static class Birthday implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private int day;
+        private int month;
+        private int year;
+        private int age;
+        public int getDay() {
+            return day;
+        }
+        public void setDay(int day) {
+            this.day = day;
+        }
+        public int getMonth() {
+            return month;
+        }
+        public void setMonth(int month) {
+            this.month = month;
+        }
+        public int getYear() {
+            return year;
+        }
+        public void setYear(int year) {
+            this.year = year;
+        }
+        public int getAge() {
+            return age;
+        }
+        public void setAge(int age) {
+            this.age = age;
+        }
+    }
 }

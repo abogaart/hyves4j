@@ -1,3 +1,19 @@
+/*
+ * Copyright 2008 Arthur Bogaart <spikylee at gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.spikylee.hyves4j;
 
 import java.io.IOException;
@@ -15,10 +31,10 @@ public abstract class AbstractHyves4jTest extends TestCase {
 	protected Properties properties = null;
 	
 	public void setUp() {
-    	consumerPropertiesURL = getClass().getResource(consumerPropertiesLocation);
+    	consumerPropertiesURL = AbstractHyves4jTest.class.getResource(consumerPropertiesLocation);
         InputStream in = null;
         try {
-            in = getClass().getResourceAsStream("/setup.properties");
+            in = AbstractHyves4jTest.class.getResourceAsStream("/setup.properties");
             properties = new Properties();
             properties.load(in);
         } catch(IOException e) {
