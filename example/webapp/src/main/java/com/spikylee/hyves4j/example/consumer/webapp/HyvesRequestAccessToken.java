@@ -56,7 +56,7 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 		H4jClientConfig config = tLocal.get();
 		if(config == null) {
 			URL consumerPropertiesURL = getClass().getResource(
-			"consumer.properties");
+			"/consumer.properties");
 			config = new H4jClientConfig("hyves", consumerPropertiesURL);
 			tLocal.set(config);
 		}
@@ -107,13 +107,13 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 			}
 		} else {
 			w.append("<form action=\"\">");
-			w.append("<input type=\"text\" name=\"methods\" />");
-			w.append("<select name=\"type\">");
+			w.append("<label>Methods</label><br/><input type=\"text\" name=\"methods\" /><br/><br/>");
+			w.append("<label>Expiration type</label<br/><select name=\"type\">");
 			w.append("<option value=\"default\">default</option>");
 			w.append("<option value=\"infinite\">infinite</option>");
 			w.append("<option value=\"user\">user</option>");
 			w.append("</select>");
-			w.append("<input type=\"submit\" value=\"go\" /></form>");
+			w.append("<br/><br/><input type=\"submit\" value=\"go\" /></form>");
 		}
 	}
 	
