@@ -16,7 +16,7 @@ import com.spikylee.hyves4j.interfaces.H4jInterface;
 import com.spikylee.hyves4j.message.H4jMessage;
 import com.spikylee.hyves4j.method.AuthAccessTokenMethod;
 import com.spikylee.hyves4j.method.AuthRequestTokenMethod;
-import com.spikylee.hyves4j.method.RevokeSelfMethod;
+import com.spikylee.hyves4j.method.AuthRevokeSelfMethod;
 import com.spikylee.hyves4j.response.H4jResponse;
 import com.spikylee.hyves4j.transport.H4jTransport;
 
@@ -96,7 +96,7 @@ public class H4jAuth extends H4jInterface {
     }
     
     public Integer revokeSelf() throws H4jException {
-        RevokeSelfMethod method = new RevokeSelfMethod();
+        AuthRevokeSelfMethod method = new AuthRevokeSelfMethod();
         transport.executeMethod(method);
         return method.getResult();
     }
