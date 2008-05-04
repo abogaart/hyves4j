@@ -19,6 +19,8 @@ package com.spikylee.hyves4j.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 7485144747415704864L;
@@ -33,7 +35,8 @@ public class User implements Serializable {
 	private int friendsCount;
 	private String url;
 	private String mediaId;
-	private String countryId;
+	
+	private Country country;
 	private City city;
 	private Date created;
 	
@@ -117,13 +120,6 @@ public class User implements Serializable {
 	public void setFriendsCount(int friendsCount) {
 		this.friendsCount = friendsCount;
 	}
-	public String getCountryId() {
-		return countryId;
-	}
-	public void setCountryId(String countryId) {
-		this.countryId = countryId;
-	}
-	
 	public Date getCreated() {
 		return created;
 	}
@@ -154,6 +150,7 @@ public class User implements Serializable {
         private int month;
         private int year;
         private int age;
+        
         public int getDay() {
             return day;
         }
@@ -178,5 +175,45 @@ public class User implements Serializable {
         public void setAge(int age) {
             this.age = age;
         }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this).
+            append("day", day).
+            append("month", month).
+            append("year", year).
+            append("age", age).
+            toString();
+        }
     }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+        append("userId", userId).
+        append("profileVisible", profileVisible).
+        append("nickName", nickName).
+        append("firstName", firstName).
+        append("lastName", lastName).
+        append("gender", gender).
+        append("birthday", birthday).
+        append("friendsCount", friendsCount).
+        append("url", url).
+        append("mediaId", mediaId).
+        append("country", country).
+        append("city", city).
+        append("created", created).
+        append("profilePicture", profilePicture).
+        append("onMyMind", onMyMind).
+        toString();
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
 }
