@@ -33,12 +33,6 @@ public class H4jClient {
 		consumer = Hyves4j.Consumers.getConsumer(config.getConsumerName(),
 				config.getPropertiesFileURL());
         accessor = new H4jAccessor(getConsumer(), getConfig());
-        if(getConfig().getRequestToken() != null)
-        	accessor.requestToken = getConfig().getRequestToken();
-        if(getConfig().getAccessToken() != null)
-        	accessor.accessToken = getConfig().getAccessToken();
-        if(getConfig().getTokenSecret() != null)
-        	accessor.tokenSecret = getConfig().getTokenSecret();
 	}
 
 	public OAuthConsumer getConsumer() {
