@@ -33,8 +33,8 @@ public class ConsoleMethod extends H4jMethod<String> {
 	@Override
 	public String getResult() {
 		StringBuffer result = new StringBuffer();
-		if(response.getPayload() != null) {
-    		for(Node node : response.getPayload()) {
+		if(response.getPayloadAsCollection() != null) {
+    		for(Node node : response.getPayloadAsCollection()) {
     			result.append(XMLUtil.prettyPrintXML(node));
     		}
 	    }
@@ -46,7 +46,7 @@ public class ConsoleMethod extends H4jMethod<String> {
 	        return;
 	    StringTokenizer token = new StringTokenizer(input, ",");
 	    while(token.hasMoreTokens()) {
-	        addResponseField(token.nextToken());
+	        setResponseField(token.nextToken(), true);
 	    }
 	}
 }
