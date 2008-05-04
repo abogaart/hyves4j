@@ -63,7 +63,7 @@ public final class HyvesConsole extends HttpServlet {
         }
 
         //Create Hyves4j config, client and Hyves4j
-        URL consumerPropertiesURL = getClass().getResource("consumer.properties");
+        URL consumerPropertiesURL = getClass().getResource("/consumer.properties");
         H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
         if (fancyLayout != null) {
             config.setFancyLayout(true);
