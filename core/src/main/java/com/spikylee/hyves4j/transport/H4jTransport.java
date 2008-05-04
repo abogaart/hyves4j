@@ -58,7 +58,7 @@ public abstract class H4jTransport {
 
     }
     
-    public H4jMethod<?> sendMethod(H4jMethod<?> method) throws H4jException {
+    public H4jMethod<?> executeMethod(H4jMethod<?> method) throws H4jException {
         H4jMessage msg = createMessage(method);
         H4jResponse resp = sendMessage(msg);
         method.setResponse(resp);
@@ -87,9 +87,9 @@ public abstract class H4jTransport {
 
         } catch (OAuthProblemException oax) {
             log.error("Problem with sending message.", oax);
-            //Biggest hack ever: the original responseBody can be recreated buy fetching 
+            //Biggest hack ever: the original responseBody can be recreated by fetching 
             //the first key from the oax parameters, then get the corresponding value 
-            //and concatenat them like this: key + "=" + value
+            //and concatenate them like this: key + "=" + value
             Map<String, Object> map = oax.getParameters();
             if(map.size() > 0) {
 	            String key = map.keySet().iterator().next();
