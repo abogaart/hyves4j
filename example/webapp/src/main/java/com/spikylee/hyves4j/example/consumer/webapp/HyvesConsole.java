@@ -112,21 +112,21 @@ public final class HyvesConsole extends HttpServlet {
             addLabel(w, "oauthSignatureMethod", OAuth.HMAC_SHA1);
             addLabel(w, "haVersion", h4j.HYVES_API_VERSION);
             addLabel(w, "haFormat", h4j.HYVES_RESPONSE_FORMAT);
-            addInput(w, "haFancyLayout", Boolean.toString(config.isFancyLayout()));
-            addInput(w, "haResponseFields", responseFields);
+            addRowWithInput(w, "haFancyLayout", Boolean.toString(config.isFancyLayout()));
+            addRowWithInput(w, "haResponseFields", responseFields);
 
             w.append("</table></td><td><table border=\"0\">");
 
-            addInput(w, "oauthToken", client.getAccessor().accessToken);
-            addInput(w, "oauthTokenSecret", client.getAccessor().tokenSecret);
-            addInput(w, "haMethod", haMethod);
+            addRowWithInput(w, "oauthToken", client.getAccessor().accessToken);
+            addRowWithInput(w, "oauthTokenSecret", client.getAccessor().tokenSecret);
+            addRowWithInput(w, "haMethod", haMethod);
             int i = 1;
             for (Parameter parameter : params) {
                 w.append("<tr><td>");
                 w.append("key:value " + i);
                 w.append("</td><td>");
-                addOnlyInput(w, "key" + i, parameter.getKey());
-                addOnlyInput(w, "value" + i, parameter.getValue());
+                addInput(w, "key" + i, parameter.getKey());
+                addInput(w, "value" + i, parameter.getValue());
                 w.append("</td></tr>");
                 i++;
             }
@@ -134,8 +134,8 @@ public final class HyvesConsole extends HttpServlet {
                 w.append("<tr><td>");
                 w.append("key:value " + i);
                 w.append("</td><td>");
-                addOnlyInput(w, "key" + i, "");
-                addOnlyInput(w, "value" + i, "");
+                addInput(w, "key" + i, "");
+                addInput(w, "value" + i, "");
                 w.append("</td></tr>");
             }
             w.append("</table></td></tr></table><input type=\"submit\" value=\"go\"/><input type=\"hidden\" name=\"doAction\" value=\"continue\" /></form>");
@@ -145,17 +145,17 @@ public final class HyvesConsole extends HttpServlet {
     }
     
     //Append new table row + text input
-    private void addInput(PrintWriter w, String name, String value) throws IOException {
+    private void addRowWithInput(PrintWriter w, String name, String value) throws IOException {
         if (value == null)
             value = "";
         w.append("<tr><td>");
         w.append(name + "</td><td>");
-        addOnlyInput(w, name, value);
+        addInput(w, name, value);
         w.append("</td></tr>");
     }
     
     //Append text input
-    private void addOnlyInput(PrintWriter w, String name, String value) throws IOException {
+    private void addInput(PrintWriter w, String name, String value) throws IOException {
         w.append("<input type=\"text\" name=\"" + name + "\" id=\"" + name + "\" value=\"" + value + "\"");
     }
     
