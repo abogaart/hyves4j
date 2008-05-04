@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package com.spikylee.hyves4j.interfaces.users;
+package com.spikylee.hyves4j.method;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Node;
-
-import com.spikylee.hyves4j.method.H4jMethod;
 import com.spikylee.hyves4j.model.User;
 import com.spikylee.hyves4j.util.H4jUserUtil;
 
@@ -39,35 +35,31 @@ public class UsersGetMethod extends H4jMethod<List<User>> {
 	
     @Override
 	public List<User> getResult() {
-    	if(response.getPayload() != null) {
-    		List<User> users = new ArrayList<User>();
-    		for(Node node : response.getPayload()) {
-    			User user  = H4jUserUtil.createUser(node);
-				users.add(user);
-    		}
+    	if(response.getPayloadAsCollection() != null) {
+    		List<User> users = H4jUserUtil.createUsers(response.getPayloadAsCollection());
     		return users;
     	}
 		return null;
 	}
     
-    public void includeCityName() {
-        addResponseField("cityname");
+    public void setIncludeCityName(boolean include) {
+        setResponseField("cityname", include);
     }
     
-    public void includeCountryName() {
-        addResponseField("countryname");
+    public void setIncludeCountryName(boolean include) {
+        setResponseField("countryname", include);
     }
 
-    public void includeProfilePicture() {
-        addResponseField("profilepicture");
+    public void setIncludeProfilePicture(boolean include) {
+        setResponseField("profilepicture", include);
     }
 
-    public void includeWhiteSpaces() {
-        addResponseField("whitespaces");
+    public void setIncludeWhiteSpaces(boolean include) {
+        setResponseField("whitespaces", include);
     }
 
-    public void includeOnMyMind() {
-        addResponseField("onmymind");
+    public void setIncludeOnMyMind(boolean include) {
+        setResponseField("onmymind", include);
     }
 
 }

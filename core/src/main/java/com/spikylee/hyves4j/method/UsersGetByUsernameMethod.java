@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.spikylee.hyves4j.interfaces.users;
+package com.spikylee.hyves4j.method;
 
 import org.w3c.dom.Node;
 
-import com.spikylee.hyves4j.method.H4jMethod;
 import com.spikylee.hyves4j.model.User;
 import com.spikylee.hyves4j.util.H4jUserUtil;
 
 public class UsersGetByUsernameMethod extends H4jMethod<User> {
-
+    
     public UsersGetByUsernameMethod(String userids) {
         this();
         setParameters("userid", userids);
@@ -36,9 +35,13 @@ public class UsersGetByUsernameMethod extends H4jMethod<User> {
 
 	@Override
 	public User getResult() {
-    	if(response.getPayload() != null) {
-    		for(Node node : response.getPayload()) {
-    			User user  = H4jUserUtil.createUser(node);
+    	if(response.getPayloadAsCollection() != null) {
+    		for(Node node : response.getPayloadAsCollection()) {
+    			User user = H4jUserUtil.createUser(node);
+    			if(logger.isDebugEnabled()) {
+    			    logger.debug("Succesfully created user: " + user);
+    			}
+    			    
     			return user;
     		}
     	}
