@@ -16,23 +16,50 @@
 
 package com.spikylee.hyves4j.util;
 
-import org.w3c.dom.Element;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.spikylee.hyves4j.model.City;
 
 public class H4jCityUtil {
     
+    final static Logger logger = LoggerFactory.getLogger(H4jCityUtil.class);
+    
+    public static List<City> createCities(Collection<Node> nodes) {
+        List<City> cities = new ArrayList<City>();
+        for(Node node : nodes) {
+            if(node.getNodeName().equals("city")) {
+                cities.add(H4jCityUtil.createCity(node));
+            }
+        }
+        return cities;
+    }
+    
     public static City createCity(Node node) {
-        Element el = (Element)node;
+        return createCity(node, "");
+    }
+    
+    public static City createCity(Node node, String prefix) {
+        JXPathUtil jxpath = new JXPathUtil(node);
         City city = new City();
-        city.setCityId(XMLUtil.getChildValue(el, "cityid"));
-        city.setRegionId(XMLUtil.getChildValue(el, "regionid"));
-        city.setCountryId(XMLUtil.getChildValue(el, "countryid"));
-        city.setName(XMLUtil.getChildValue(el, "name"));
-        city.setCityTabId(XMLUtil.getChildValue(el, "citytabid"));
-        city.setUrl(XMLUtil.getChildValue(el, "url"));
-                
+        city.setCityId(jxpath.getStringValue(prefix + "/cityid"));
+        city.setRegionId(jxpath.getStringValue(prefix + "/regionid"));
+        city.setCountryId(jxpath.getStringValue(prefix + "/countryid"));
+        String cityName = jxpath.getStringValue(prefix + "/cityname");
+        if(cityName == null)
+            cityName = jxpath.getStringValue(prefix + "/name");
+        city.setName(cityName);
+        city.setCityTabId(jxpath.getStringValue(prefix + "/citytabid"));
+        city.setUrl(jxpath.getStringValue(prefix + "/url"));
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("City created: " + city);
+        }
         return city;
     }
 }

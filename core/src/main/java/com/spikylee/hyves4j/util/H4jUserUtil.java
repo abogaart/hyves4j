@@ -16,78 +16,82 @@
 
 package com.spikylee.hyves4j.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
-import org.w3c.dom.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
-import com.spikylee.hyves4j.model.City;
-import com.spikylee.hyves4j.model.Image;
 import com.spikylee.hyves4j.model.ProfilePicture;
 import com.spikylee.hyves4j.model.User;
 
 public class H4jUserUtil {
 
-	public static User createUser(Node node) {
-	    Element userEl = (Element)node;
-		User user = new User();
-		user.setUserId(XMLUtil.getChildValue(userEl, "userid"));
-		user.setNickName(XMLUtil.getChildValue(userEl, "nickname"));
-		user.setFirstName(XMLUtil.getChildValue(userEl, "firstname"));
-		user.setLastName(XMLUtil.getChildValue(userEl, "lastname"));
-		user.setGender(XMLUtil.getChildValue(userEl, "gender"));
+    final static Logger logger = LoggerFactory.getLogger(H4jUserUtil.class);
 
-		user.getBirthday().setAge(
-				XMLUtil.getChildValueAsInt(userEl, "age"));
-		user.getBirthday().setDay(
-				XMLUtil.getChildValueAsInt(userEl, "day"));
-		user.getBirthday().setMonth(
-				XMLUtil.getChildValueAsInt(userEl, "month"));
-		user.getBirthday().setYear(
-				XMLUtil.getChildValueAsInt(userEl, "year"));
+    public static List<User> createUsers(Collection<Node> nodes) {
+        List<User> users = new ArrayList<User>();
+        for (Node node : nodes) {
+            User user = createUser(node);
+            if (user != null)
+                users.add(user);
+        }
+        return users;
+    }
 
-		user.setFriendsCount(XMLUtil.getChildValueAsInt(userEl,
-				"friendscount"));
-		user.setUrl(XMLUtil.getChildValue(userEl, "url"));
-		user.setMediaId(XMLUtil.getChildValue(userEl, "mediaid"));
-		user.setCountryId(XMLUtil.getChildValue(userEl, "countryid"));
+    public static User createUser(Collection<Node> nodes) {
+        for (Node node : nodes) {
+            if (node.getNodeName().equals("user")) {
+                User user = createUser(node);
+                return user;
+            }
+        }
+        return null;
+    }
 
-		City city = new City();
-		city.setCityId(XMLUtil.getChildValue(userEl, "cityid"));
-		city.setName(XMLUtil.getChildValue(userEl, "cityname"));
-		user.setCity(city);
+    public static User createUser(Node node) {
+        if (!node.getNodeName().equals("user"))
+            return null;
 
-		int created = XMLUtil.getChildValueAsInt(userEl, "created");
-		if (created > -1) {
-			Date date = new Date(created);
-			user.setCreated(date);
-		}
-		
-		Element ppEl = XMLUtil.getChild(userEl, "profilepicture");
-		if(ppEl != null) {
-		    ProfilePicture profilePicture = new ProfilePicture();
-		    profilePicture.setMediaId(XMLUtil.getChildValue(ppEl, "mediaid"));
-		    profilePicture.setUserId(XMLUtil.getChildValue(ppEl, "userid"));
-		    profilePicture.setTitle(XMLUtil.getChildValue(ppEl, "title"));
-		    profilePicture.setDescription(XMLUtil.getChildValue(ppEl, "description"));
-		    profilePicture.setMediaType(XMLUtil.getChildValue(ppEl, "mediatype"));
-		    
-		    profilePicture.setImage(getImage(XMLUtil.getChild(ppEl, "image")));
-		    profilePicture.setFullscreenImage(getImage(XMLUtil.getChild(ppEl, "image_fullscreen")));
-		    profilePicture.setSmallIcon(getImage(XMLUtil.getChild(ppEl, "icon_small")));
-		    profilePicture.setMediumIcon(getImage(XMLUtil.getChild(ppEl, "icon_medium")));
-		    profilePicture.setLargeIcon(getImage(XMLUtil.getChild(ppEl, "icon_large")));
-		    user.setProfilePicture(profilePicture);
-		}
-		
-		return user;
-	}
-	
-	public static Image getImage(Element el) {
-        Image img = new Image();
-        img.setWidth(XMLUtil.getChildValueAsInt(el, "width"));
-        img.setHeight(XMLUtil.getChildValueAsInt(el, "height"));
-        img.setSource(XMLUtil.getChildValue(el, "src"));
-        return img;
-	}
+        JXPathUtil jxpath = new JXPathUtil(node);
+
+        User user = new User();
+        user.setUserId(jxpath.getStringValue("/userid"));
+        user.setNickName(jxpath.getStringValue("/nickname"));
+        user.setFirstName(jxpath.getStringValue("/firstname"));
+        user.setLastName(jxpath.getStringValue("/lastname"));
+        user.setGender(jxpath.getStringValue("/gender"));
+
+        user.getBirthday().setAge(jxpath.getIntValue("/birthday/age"));
+        user.getBirthday().setDay(jxpath.getIntValue("/birthday/day"));
+        user.getBirthday().setMonth(jxpath.getIntValue("/birthday/month"));
+        user.getBirthday().setYear(jxpath.getIntValue("/birthday/year"));
+
+        user.setFriendsCount(jxpath.getIntValue("/friendscount"));
+        user.setUrl(jxpath.getStringValue("/url"));
+        user.setMediaId(jxpath.getStringValue("/mediaid"));
+
+        user.setCountry(H4jCountryUtil.createCountry(node));
+        user.setCity(H4jCityUtil.createCity(node));
+        
+        long created = jxpath.getLongValue("/created");
+        if (created > -1) {
+            long timestamp = created * 1000;
+            Date date = new Date(timestamp);
+            user.setCreated(date);
+        }
+
+        ProfilePicture profilePicture = H4jPictureUtil.createProfilePicture(node);
+        user.setProfilePicture(profilePicture);
+        user.setOnMyMind(jxpath.getStringValue("onmymind"));
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug("User created: " + user);
+        }
+        return user;
+    }
+
 }
