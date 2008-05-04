@@ -19,12 +19,18 @@ package com.spikylee.hyves4j.method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.oauth.OAuth.Parameter;
 
 import com.spikylee.hyves4j.H4jException;
 import com.spikylee.hyves4j.response.H4jResponse;
 
 public abstract class H4jMethod<T> {
+    
+    protected final static Logger logger = LoggerFactory.getLogger(UsersGetByUsernameMethod.class);
+    
     private String name;
     private String responseFormat;
     private List<Parameter> parameters;
@@ -68,12 +74,25 @@ public abstract class H4jMethod<T> {
         return buf.toString();
     }
     
-    protected void addResponseField(String name) {
+    private void addResponseField(String name) {
         if(!haResponseFields.contains(name)){
             haResponseFields.add(name);
         }
     }
     
+    private void removeResponseField(String name) {
+        if(haResponseFields.contains(name)){
+            haResponseFields.remove(name);
+        }
+    }
+    
+    protected void setResponseField(String name, boolean include){
+        if(include)
+            addResponseField(name);
+        else
+            removeResponseField(name);
+    }
+
     public String getSuccessKey() {
         return successKey;
     }
