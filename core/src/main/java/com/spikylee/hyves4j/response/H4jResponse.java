@@ -52,7 +52,9 @@ public abstract class H4jResponse {
     
     public abstract String getParameter(String name);
     
-    public abstract Collection<Node> getPayload();
+    public abstract Document getPayloadAsDOM();
+    
+    public abstract Collection<Node> getPayloadAsCollection();
     
     public abstract void parse(Document document);
 

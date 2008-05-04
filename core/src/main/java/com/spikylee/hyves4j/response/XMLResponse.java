@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.spikylee.hyves4j.Hyves4j;
 import com.spikylee.hyves4j.method.H4jMethod;
 import com.spikylee.hyves4j.util.XMLUtil;
 
@@ -33,16 +34,21 @@ public class XMLResponse extends H4jResponse {
     public static final String RESPONSE_FORMAT = "xml";
     
     final Logger logger = LoggerFactory.getLogger(XMLResponse.class);
-
-    private Collection<Node> payload;
+    
+    private Document doc;
     
     public XMLResponse(H4jMethod<?> method) {
         super(method);
     }
 
     @Override
-	public Collection<Node> getPayload() {
-		return payload;
+    public Document getPayloadAsDOM() {
+        return doc;
+    }
+    
+    @Override
+	public Collection<Node> getPayloadAsCollection() {
+		return XMLUtil.getChildElements(doc.getDocumentElement());
 	}
     
     public void parse(Document document) {
@@ -51,14 +57,16 @@ public class XMLResponse extends H4jResponse {
 
         if(logger.isDebugEnabled())  {
         	logger.debug("Parsing result from method " + getMethod().getName());
-            logger.debug(XMLUtil.prettyPrintXML(rootElement));
+        	if(Hyves4j.DEBUG_RESPONSE_XML)
+        	    logger.debug(XMLUtil.prettyPrintXML(rootElement));
         }
         
         if (rootElement.getTagName().equals(getMethod().getSuccessKey())) {
-            payload = XMLUtil.getChildElements(rootElement);
+            doc = document;
+            //payload = XMLUtil.getChildElements(rootElement);
         } else {
         
-            payload = XMLUtil.getChildElements(rootElement);
+            //Collection<Node> payload = XMLUtil.getChildElements(rootElement);
             
             if (rootElement.getTagName().equals(getMethod().getFailKey())) {
                 errorCode = "Hyves error code " + XMLUtil.getChildValue(rootElement, "error_code");
@@ -94,7 +102,7 @@ public class XMLResponse extends H4jResponse {
     }
     
     public String getParameter(String name) {
-        return XMLUtil.getValue(XMLUtil.getChild(payload, name));
+        return XMLUtil.getValue(XMLUtil.getChild(getPayloadAsCollection(), name));
     }
 
 }
