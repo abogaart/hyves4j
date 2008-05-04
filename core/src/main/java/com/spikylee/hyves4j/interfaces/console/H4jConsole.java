@@ -38,7 +38,7 @@ public class H4jConsole extends H4jInterface {
             method.setResponseFields(responseFields);
         }
         method.setParameters(params);
-        transport.sendMethod(method);
+        transport.executeMethod(method);
         return method.getResult();
 	}
 

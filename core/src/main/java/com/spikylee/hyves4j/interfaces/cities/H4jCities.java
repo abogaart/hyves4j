@@ -21,6 +21,7 @@ import java.util.List;
 import com.spikylee.hyves4j.H4jException;
 import com.spikylee.hyves4j.client.H4jClient;
 import com.spikylee.hyves4j.interfaces.H4jInterface;
+import com.spikylee.hyves4j.method.CitiesGetMethod;
 import com.spikylee.hyves4j.model.City;
 import com.spikylee.hyves4j.transport.H4jTransport;
 
@@ -30,11 +31,18 @@ public class H4jCities extends H4jInterface {
         super(client, transport);
     }
     
-    public City get(String cityIds) throws H4jException {
-        CitiesGetMethod method = new CitiesGetMethod(cityIds);
-        transport.sendMethod(method);
-        List<City> cities = method.getResult();
-        return cities.get(0);
+    public City getCity(String cityIds) throws H4jException {
+        List<City> cities = get(cityIds);
+        if(cities == null)
+            return null;
+        else 
+            return cities.get(0); 
     }
-
+    
+    public List<City> get(String cityIds) throws H4jException {
+        CitiesGetMethod method = new CitiesGetMethod(cityIds);
+        transport.executeMethod(method);
+        return method.getResult();
+    }
+    
 }
