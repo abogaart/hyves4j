@@ -47,4 +47,12 @@ public abstract class AbstractHyves4jTest extends TestCase {
 			}
         }
 	}
+	
+	protected String getTestUserId() {
+	    return properties.getProperty("userid");
+	}
+	
+	protected String getTestUserName() {
+	    return properties.getProperty("username");
+	}
 }
