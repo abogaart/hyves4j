@@ -32,7 +32,7 @@ public class H4jAccessor extends OAuthAccessor {
     public H4jAccessor(OAuthConsumer consumer, H4jClientConfig config) {
         super(consumer);
         this.config = config;
-        if(config.getAccessToken()!=null) {
+        if(config.getAccessToken() != null) {
             accessToken = config.getAccessToken();
         }
         if(config.getRequestToken() != null) {
