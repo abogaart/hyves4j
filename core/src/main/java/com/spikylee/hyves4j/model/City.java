@@ -18,6 +18,8 @@ package com.spikylee.hyves4j.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class City implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +67,18 @@ public class City implements Serializable {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+        append("cityId", cityId).
+        append("regionId", regionId).
+        append("countryId", countryId).
+        append("name", name).
+        append("cityTabId", cityTabId).
+        append("url", url).
+        toString();
     }
     
 }

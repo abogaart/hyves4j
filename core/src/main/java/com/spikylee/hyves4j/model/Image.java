@@ -18,6 +18,8 @@ package com.spikylee.hyves4j.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class Image implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,4 +47,12 @@ public class Image implements Serializable {
         this.source = source;
     }
     
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+        append("width", width).
+        append("height", height).
+        append("source", source).
+        toString();
+    }
 }

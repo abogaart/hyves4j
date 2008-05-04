@@ -18,6 +18,8 @@ package com.spikylee.hyves4j.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class ProfilePicture implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -95,4 +97,19 @@ public class ProfilePicture implements Serializable {
         this.largeIcon = largeIcon;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+        append("mediaId", mediaId).
+        append("userId", userId).
+        append("title", title).
+        append("description", description).
+        append("mediaType", mediaType).
+        append("image", image).
+        append("fullscreenImage", fullscreenImage).
+        append("smallIcon", smallIcon).
+        append("mediumIcon", mediumIcon).
+        append("largeIcon", largeIcon).
+        toString();
+    }
 }
