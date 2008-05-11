@@ -97,7 +97,6 @@ public final class HyvesConsole extends HttpServlet {
             //Show Console form
             PrintWriter w = response.getWriter();
             w.append("<html><head>");
-            w.append("<script language=\"javascript\" type=\"text/javascript\" src=\"resources/js/jquery-1.2.3.js\">");
             w.append("<script language=\"javascript\" type=\"text/javascript\" src=\"resources/js/formHelper.js\">");
             w.append("</head><body>");
             w.append("<h1>Hyves4j Console</h1>");
