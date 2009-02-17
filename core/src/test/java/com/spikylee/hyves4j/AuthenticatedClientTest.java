@@ -110,8 +110,8 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
             // find the submit button and the field that we want to change.
             final HtmlForm form = page1.getFormByName("loginform");
 
-            form.getInputByName("login_username").setValueAttribute("spikylee");
-            form.getInputByName("login_password").setValueAttribute("karnemelk7337");
+            form.getInputByName("login_username").setValueAttribute(properties.getProperty("username"));
+            form.getInputByName("login_password").setValueAttribute(properties.getProperty("password"));
             final HtmlPage page2 = (HtmlPage)form.getInputByName("btnLogin").click();
             
             final HtmlForm form2 = page2.getForms().get(1);
