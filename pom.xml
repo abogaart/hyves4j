@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.spikylee.hyves4j</groupId>
-  <artifactId>hyves4j-api</artifactId>
+  <artifactId>hyves4j-parent</artifactId>
   <version>1.01.00-SNAPSHOT</version>
   
-  <name>Hyves for Java API</name>
+  <name>Hyves4j::Parent POM</name>
   <description>An api that wraps the logic and complexity of HttpRequests to the Hyves API. Based on OAuth.net</description>
   <packaging>pom</packaging>
   
@@ -33,7 +33,6 @@
   </modules>
   
   <properties>
-    <oauth.version>20080229</oauth.version>
     <lb.version>0.9.8</lb.version>
     <junit.version>3.8.1</junit.version>
   </properties>
