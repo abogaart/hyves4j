@@ -9,9 +9,9 @@
   </parent>
   
   <groupId>com.spikylee.hyves4j.example</groupId>
-  <artifactId>consumer</artifactId>
+  <artifactId>h4j-consumer</artifactId>
   <packaging>war</packaging>
-  <name>Hyves4j Example Consumer webapp</name>
+  <name>Hyves4j::Example Consumer webapp</name>
   
   <dependencies>
     <dependency>

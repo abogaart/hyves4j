@@ -48,7 +48,7 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 
 		PrintWriter w = response.getWriter();
 		w.append("<html><head>");
-		w.append("<script language=\"javascript\" type=\"text/javascript\" src=\"resources/js/formHelper.js\">");
+		w.append("<script language=\"javascript\" type=\"text/javascript\" src=\"resources/js/formHelper.js\"> </script>");
 		w.append("</head><body>");
 		w.append("<h1>Hyves4j request new acces token</h1>");
 		
@@ -57,7 +57,7 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 			URL consumerPropertiesURL = getClass().getResource(
 			"/consumer.properties");
 			config = new H4jClientConfig("hyves", consumerPropertiesURL);
-			tLocal.set(config);
+            tLocal.set(config);
 		}
 		
 		String oauthToken = request.getParameter("oauth_token");
@@ -83,30 +83,39 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 		}
 		
 		if(!isEmpty(methods) || !isEmpty(oauthToken)) {
-			
 			try {
+
 				H4jClient client = Hyves4j.createAuthenticatedClient(config);
 				String callbackMethods = request.getParameter("methods");
 				logger.debug("Successfully aquired access token for method(s) " + callbackMethods);
 				w.append("<p>You now have a valid access token for method(s) ").append(callbackMethods).append("<br/>");
-				w.append("AccessToken: " + client.getConfig().getAccessToken()).append("<br/>");
-				w.append("TokenSecret: " + client.getConfig().getTokenSecret());
+				w.append("AccessToken: " + config.getAccessToken()).append("<br/>");
+				w.append("TokenSecret: " + config.getTokenSecret());
 				w.append("</p>");
 				
-				config.setExpirationType("user");
-				config.getMethods().clear();
+				resetConfig(config);
+
 			} catch(RedirectException re) {
 				//time to go and click yes
 				logger.debug("Redirect caught, please go to: " + re.getMessage());
 				response.sendRedirect(re.getMessage());
 				
 			} catch (H4jException e) {
-				logger.error(e.getErrorCode());
-				logger.error(e.getErrorMessage());
+				String code = e.getErrorCode();
+				String msg = e.getErrorMessage();
+	
+				logger.error(code);
+                logger.error(msg);
+			    
+				w.append("<h1>An error occured</h1>");
+				w.append("<strong>" + code + "</strong><br/>");
+				w.append(msg);
+				
+				resetConfig(config);
 			}
 		} else {
 			w.append("<form action=\"\">");
-			w.append("<label>Methods</label><br/><input type=\"text\" name=\"methods\" /><br/><br/>");
+			w.append("<label>Methods (comma seperated)</label><br/><input type=\"text\" name=\"methods\" /><br/><br/>");
 			w.append("<label>Expiration type</label<br/><select name=\"type\">");
 			w.append("<option value=\"default\">default</option>");
 			w.append("<option value=\"infinite\">infinite</option>");
@@ -114,9 +123,18 @@ public final class HyvesRequestAccessToken extends HttpServlet {
 			w.append("</select>");
 			w.append("<br/><br/><input type=\"submit\" value=\"go\" /></form>");
 		}
+		w.append("</body></html>");
 	}
 	
-	private boolean isEmpty(String str) {
+	private void resetConfig(H4jClientConfig config) {
+        config.setExpirationType("user");
+        config.getMethods().clear();
+        config.setAccessToken(null);
+        config.setTokenSecret(null);
+        config.getCallbackParameters().clear();
+    }
+
+    private boolean isEmpty(String str) {
 		return str == null || "".equals(str);
 	}
 }
