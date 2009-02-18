@@ -55,4 +55,8 @@ public abstract class AbstractHyves4jTest extends TestCase {
 	protected String getTestUserName() {
 	    return properties.getProperty("username");
 	}
+	
+	protected void fail(H4jException e) {
+        fail(e.getErrorCode() + " - " + e.getErrorMessage());
+	}
 }

@@ -22,11 +22,9 @@ import java.util.Properties;
 
 import net.oauth.ConsumerProperties;
 import net.oauth.OAuthConsumer;
-import net.oauth.client.HttpClientPool;
 import net.oauth.client.OAuthClient;
-import net.oauth.client.OAuthHttpClient;
+import net.oauth.client.httpclient3.HttpClient3;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.RedirectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,15 +128,9 @@ public class Hyves4j {
     }
 
     /**
-     * Simple http-pool, simply creates a new instance every time. Copied this
-     * from an example, some extra work for a more efficient solution would is
-     * needed
+     * Simple http-client pool.
      */
-    public static final OAuthClient HTTP_CLIENT = new OAuthHttpClient(new HttpClientPool() {
-        public HttpClient getHttpClient(URL server) {
-            return new HttpClient();
-        }
-    });
+    public static final OAuthClient HTTP_CLIENT = new OAuthClient(new HttpClient3());
 
     /**
      * Pool of consumer configurations

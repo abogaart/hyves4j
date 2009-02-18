@@ -55,7 +55,6 @@ public abstract class H4jTransport {
             log.error("Creation of new Hyves4jTransport failed.", e);
             throw new RuntimeException("Creation of new Hyves4jTransport failed.", e);
         }
-
     }
     
     public H4jMethod<?> executeMethod(H4jMethod<?> method) throws H4jException {
@@ -83,13 +82,13 @@ public abstract class H4jTransport {
             result = Hyves4j.HTTP_CLIENT.invoke(client.getAccessor(), Hyves4j.HYVES_API, message
                     .getMessage().getParameters());
 
-            responseBody = result.getBodyAsString();
+            responseBody = result.readBodyAsString();
 
         } catch (OAuthProblemException oax) {
             log.error("Problem with sending message.", oax);
-            //Biggest hack ever: the original responseBody can be recreated by fetching 
+            //The original responseBody can be recreated by fetching 
             //the first key from the oax parameters, then get the corresponding value 
-            //and concatenate them like this: key + "=" + value
+            //and concatenate them: key + "=" + value
             Map<String, Object> map = oax.getParameters();
             if(map.size() > 0) {
 	            String key = map.keySet().iterator().next();

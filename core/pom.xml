@@ -5,26 +5,28 @@
 
   <parent>
     <groupId>com.spikylee.hyves4j</groupId>
-    <artifactId>hyves4j-api</artifactId>
+    <artifactId>hyves4j-parent</artifactId>
     <version>1.01.00-SNAPSHOT</version>
   </parent>
 
-  <artifactId>core</artifactId>
+  <artifactId>h4j-core</artifactId>
   <packaging>jar</packaging>
-  <name>Hyves4j Core</name>
+  <name>Hyves4j::Core</name>
   
   <properties>
     <commons-lang.version>2.3</commons-lang.version>
     <commons-jxpath.version>1.2</commons-jxpath.version>
     <htmlunit.version>2.1</htmlunit.version>
     <commons-collections.version>3.2.1</commons-collections.version>
+    <oauth-core.version>20090121</oauth-core.version>
   </properties>
 
   <dependencies>
     
     <dependency>
       <groupId>net.oauth</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>oauth-core</artifactId>
+      <version>${oauth-core.version}</version>
     </dependency>
     
     <dependency>

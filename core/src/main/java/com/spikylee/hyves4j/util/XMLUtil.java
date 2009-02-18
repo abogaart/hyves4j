@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -33,21 +34,26 @@ public class XMLUtil {
 
     private XMLUtil() {
     }
-
+    
+    /**
+     * Return all child nodes of the node argument that are an instance of Element  
+     * 
+     * @param node  Parent node
+     * @return All child nodes that are an instance of Element, or null if empty
+     */
     public static Collection<Node> getChildElements(Node node) {
         NodeList nodes = node.getChildNodes();
         if (nodes.getLength() == 0) {
             return null;
-        } else {
-            List<Node> elements = new ArrayList<Node>(nodes.getLength());
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node childNode = nodes.item(i);
-                if (childNode instanceof Element) {
-                    elements.add(childNode);
-                }
-            }
-            return elements;
         }
+        List<Node> elements = new ArrayList<Node>(nodes.getLength());
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node childNode = nodes.item(i);
+            if (childNode instanceof Element) {
+                elements.add(childNode);
+            }
+        }
+        return elements;
     }
 
     /**
@@ -65,7 +71,13 @@ public class XMLUtil {
         }
         return null;
     }
-
+    
+    /**
+     * If the first childNode of the node argument is a text node, return its value, else return null
+     * 
+     * @param node The Node
+     * @return 
+     */
     public static String getValue(Node node) {
         if (node.getFirstChild() != null && node.getFirstChild().getNodeType() == Node.TEXT_NODE) {
             return node.getFirstChild().getNodeValue();
@@ -83,7 +95,14 @@ public class XMLUtil {
     public static Element getChild(Element element, String name) {
         return (Element) element.getElementsByTagName(name).item(0);
     }
-
+    
+    /**
+     * Lookup an element by nodename in collection nodes
+     *
+     * @param nodes List of possible candidates
+     * @param name Node name to match 
+     * @return The first element that matches the name or null 
+     */
     public static Element getChild(Collection<Node> nodes, String name) {
         Iterator<Node> it = nodes.iterator();
         while (it.hasNext()) {
@@ -94,7 +113,14 @@ public class XMLUtil {
         }
         return null;
     }
-
+    
+    /**
+     * Lookup an element by nodename in a NodeList
+     * 
+     * @param nodes List of possible candidates
+     * @param name Node name to match 
+     * @return The first element that matches the name or null 
+     */
     public static Element getChild(NodeList nodes, String name) {
         for(int i=0; i<nodes.getLength(); i++) {
             Element element = (Element) nodes.item(i);
@@ -104,8 +130,6 @@ public class XMLUtil {
         }
         return null;
     }
-
-
     
     /**
      * Get the value of the fist child element with the given name.
@@ -117,66 +141,136 @@ public class XMLUtil {
     public static String getChildValue(Element element, String name) {
         return getValue(getChild(element, name));
     }
-
-    public static int getAttributeAsInt(Element el, String name) {
-        String s = el.getAttribute(name);
-        if (s != null && s.length() > 0) {
-            return Integer.parseInt(s);
-        }
-        return 0;
-    }
-
-    public static boolean getAttributeAsBoolean(Element el, String name) {
-        String s = el.getAttribute(name);
-        if (s == null || "0".equals(s)) {
-            return false;
-        }
-        if ("1".equals(s)) {
-            return true;
-        }
-        return Boolean.valueOf(s);
-    }
     
+    /**
+     * Pretty print XML as a String. Uses the TextPrinter to do the markup.
+     * @param node Node to be pretty printed
+     * @return String containing pretty printed xml of node
+     */
     public static String prettyPrintXML(Node node) {
-    	StringBuffer buf = new StringBuffer();
-    	prettyPrintXML(node, buf, 0);
-    	return buf.toString();
+    	return prettyPrintXML(node, new TextPrinter());
     }
     
-    public static void prettyPrintXML(Node node, StringBuffer sb, int depth) {
-        String prefix = "";
-        for(int i=0; i<depth;i++)
-            prefix += "  ";
-        sb.append(prefix);
-        sb.append("<");
-        sb.append(node.getNodeName());
-        sb.append(">");
-        if(XMLUtil.getValue(node) != null) {
-            sb.append("\n");
-            sb.append(prefix);
-            sb.append("  ");
-            sb.append(XMLUtil.getValue(node));
-        }
-        sb.append("\n");
+    /**
+     * Pretty print XML as a String by parsing it with XmlPrinter printer
+     * @param node Node to be pretty printed
+     * @param printer XmlPrinter to pretty print the Node
+     * @return String containing pretty printed xml of node
+     */
+    public static String prettyPrintXML(Node node, XmlPrinter printer) {
+        printXML(node, printer);
+        return printer.toString();
+    }
+    
+    /**
+     * Recursively traverse the node and use the printer to register the 
+     * start node, end node and attributes events.  
+     * @param node
+     * @param printer
+     */
+    public static void printXML(Node node, XmlPrinter printer) {
+        printer.startElement(node);
         if(node.hasChildNodes()) {
             Collection<Node> childNodes = XMLUtil.getChildElements(node);
             for(Node childNode : childNodes) {
-                prettyPrintXML(childNode, sb, depth+1);
+                printXML(childNode, printer);
             }
         }
-        sb.append(prefix);
-        sb.append("</");
-        sb.append(node.getNodeName());
-        sb.append(">\n");
+        printer.endElement(node);
     }
+    
+    /**
+     * The XmlPrinter provides an interface for simple pretty printing
+     * of xml. It declares a startElement, endElement and setText 
+     * @author adcb
+     *
+     */
+	public abstract static class XmlPrinter { 
+	    protected StringBuffer sb = new StringBuffer();
+	    private int depth = -1;
+	    
+        public final void startElement(Node node) {
+            depth++;
+            String nodeName = node.getNodeName();
+            printStartElementPrefix(nodeName, depth);
+            printStartElementAttributes(node.getAttributes(), depth);
+            printStartElementSuffix(nodeName, depth);
+            
+            String value = XMLUtil.getValue(node);
+            if(value != null) {
+                printText(value, depth);
+            }
+        }
 
-	public static int getChildValueAsInt(Element node, String string) {
-		try {
-			Integer newInt = new Integer(getChildValue(node, string));
-			return newInt.intValue();
-		} catch (NumberFormatException e) {
-			return -1;
-		}
+        public final void endElement(Node node) {
+            printEndElement(node.getNodeName(), depth);
+            depth--;
+        }
+
+        public abstract void printStartElementAttributes(NamedNodeMap attributes, final int depth);
+
+        public abstract void printStartElementPrefix(String nodeName, final int depth);
+
+        public abstract void printStartElementSuffix(String nodeName, final int depth);
+
+        public abstract void printEndElement(String nodeName, final int depth);
+
+        public abstract void printText(String value, final int depth);
+        
+        @Override
+        public String toString() {
+            return sb.toString();
+        }
 	}
+	
+	public static class TextPrinter extends XmlPrinter {
+	    
+        private static final String TAB_SIZE = "  ";
 
+        @Override
+        public void printEndElement(String nodeName, final int depth) {
+            sb.append('\n');
+            sb.append(getPrefix(depth));
+            sb.append("</");
+            sb.append(nodeName);
+            sb.append(">");
+        }
+
+        protected String getPrefix(final int depth) {
+            String prefix = "";
+            for(int i=0;i<depth;i++) {
+                prefix += TAB_SIZE;
+            }
+            return prefix;
+        }
+
+        @Override
+        public void printStartElementAttributes(NamedNodeMap attributes, final int depth) {
+            if(attributes != null) {
+                for(int i=0; i<attributes.getLength(); i++) {
+                    Node node = attributes.item(i);
+                    sb.append(' ').append(node.getNodeName()).append('=').append('"').append(node.getNodeValue()).append('"');
+                }
+            }
+        }
+
+        @Override
+        public void printStartElementPrefix(String nodeName, final int depth) {
+            sb.append("\n");
+            sb.append(getPrefix(depth));
+            sb.append('<');
+            sb.append(nodeName);
+        }
+
+        @Override
+        public void printStartElementSuffix(String nodeName, final int depth) {
+            sb.append(">");
+        }
+
+        @Override
+        public void printText(String value, final int depth) {
+            sb.append('\n').append(getPrefix(depth + 1)).append(value);
+        }
+	}
+	
 }

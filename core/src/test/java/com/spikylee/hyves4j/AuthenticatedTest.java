@@ -46,7 +46,7 @@ public class AuthenticatedTest extends AbstractAuthenticatedHyves4jTest {
             assertNotNull(user.getUserId());
             assertEquals(user.getUserId(), getTestUserId());
         } catch (H4jException e) {
-            fail(e.getErrorCode() + " - " + e.getErrorMessage());
+            fail(e);
         }
     }
 	
@@ -58,7 +58,7 @@ public class AuthenticatedTest extends AbstractAuthenticatedHyves4jTest {
             assertNotNull(usr.getUserId());
             assertEquals(usr.getUserId(), getTestUserId());
         } catch (H4jException e) {
-            fail(e.getErrorCode() + " - " + e.getErrorMessage());
+            fail(e);
         }
 	}
 
@@ -74,7 +74,7 @@ public class AuthenticatedTest extends AbstractAuthenticatedHyves4jTest {
             assertNotNull(usr.getCountry().getName());
             assertNotNull(usr.getOnMyMind());
         } catch (H4jException e) {
-            fail(e.getErrorCode() + " - " + e.getErrorMessage());
+            fail(e);
         }
     }
    
@@ -85,7 +85,7 @@ public class AuthenticatedTest extends AbstractAuthenticatedHyves4jTest {
            assertEquals(properties.getProperty("cityid"), city.getCityId());
            assertEquals(properties.getProperty("cityname"), city.getName());
        } catch (H4jException e) {
-           fail(e.getErrorCode() + " - " + e.getErrorMessage());
+           fail(e);
        }
    }
 
@@ -97,7 +97,7 @@ public class AuthenticatedTest extends AbstractAuthenticatedHyves4jTest {
            assertEquals(properties.getProperty("countryid"), country.getCountryId());
            assertEquals(properties.getProperty("countryname"), country.getName());
        } catch (H4jException e) {
-           fail(e.getErrorCode() + " - " + e.getErrorMessage());
+           fail(e);
        }
    }
 

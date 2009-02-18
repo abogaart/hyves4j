@@ -22,8 +22,6 @@ import java.net.URL;
 import java.util.StringTokenizer;
 
 import org.apache.commons.httpclient.RedirectException;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -62,7 +60,7 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
         Hyves4j h4j = new Hyves4j(client);
         assertNotNull(h4j);
     }
-    
+
     public void testNewAuthenticatedClient() {
         H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
         config.addMethod("auth.revokeSelf");
@@ -73,6 +71,7 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
             e.printStackTrace();
         } catch (RedirectException e) {
             String oauthToken = getOauthToken(e.getMessage());
+            assertNotNull(oauthToken, "Oauthtoken shouldn't be null");
             config.setAccessToken(oauthToken);
             try {
                 client = Hyves4j.createAuthenticatedClient(config);
@@ -94,39 +93,37 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
             int numberDeleted= auth.revokeSelf();
             assertEquals(1, numberDeleted);
         } catch (H4jException e) {
-            e.printStackTrace();
+            fail(e);
         }
     }
     
-    
+    /**
+     * Kind of tricky: open the redirect url in a webclient and simulate logging in and accepting the request,
+     * than parsing the redirect url to fetch the authToken.
+     * @param url Redirect url for authtoken of requested methods
+     * @return a valid authToken or null if not found
+     */
     private String getOauthToken(String url) {
         final WebClient webClient = new WebClient();
 
         // Get the first page
+        HtmlPage page1 = null;
         try {
-            HtmlPage page1 = (HtmlPage) webClient.getPage(url);
+            page1 = (HtmlPage) webClient.getPage(url);
             
             // Get the form that we are dealing with and within that form, 
             // find the submit button and the field that we want to change.
-            final HtmlForm form = page1.getFormByName("loginform");
+            HtmlForm form = page1.getFormByName("loginform");
 
-            form.getInputByName("login_username").setValueAttribute(properties.getProperty("username"));
-            form.getInputByName("login_password").setValueAttribute(properties.getProperty("password"));
-            final HtmlPage page2 = (HtmlPage)form.getInputByName("btnLogin").click();
+            form.getInputByName("auth_username").setValueAttribute(properties.getProperty("username"));
+            form.getInputByName("auth_password").setValueAttribute(properties.getProperty("password"));
+            page1 = (HtmlPage)form.getInputByName("btnLogin").click();
             
-            final HtmlForm form2 = page2.getForms().get(1);
-            HtmlInput field = null;
-            NodeList list = form2.getElementsByTagName("input");
-            for(int i=0; i<list.getLength();i++) {
-                Node node = list.item(i);
-                String debug = node.getAttributes().getNamedItem("value").getNodeValue();
-                if(debug.equals("Opslaan en ga verder naar partner-site")) {
-                    field = (HtmlInput) node;
-                }
-            }
+            form = page1.getForms().get(1);
+            HtmlInput field = form.getInputByName("acceptButton");
             if (field != null) {
-                final HtmlPage page3 = (HtmlPage)field.click();
-                URL callbackUrl = page3.getWebResponse().getUrl();
+                page1 = (HtmlPage)field.click();
+                URL callbackUrl = page1.getWebResponse().getUrl();
                 String q = callbackUrl.getQuery();
                 StringTokenizer tokenizer = new StringTokenizer(q, "&");
                 while(tokenizer.hasMoreTokens()) {
@@ -140,10 +137,13 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
             
         } catch (FailingHttpStatusCodeException e1) {
             e1.printStackTrace();
+            fail("Failed status code: " + e1.getStatusCode() + " msg: " + e1.getMessage());
         } catch (MalformedURLException e1) {
             e1.printStackTrace();
+            fail("Malformed url: " + e1.getMessage());
         } catch (IOException e1) {
             e1.printStackTrace();
+            fail("IOException: " + e1.getMessage());
         }
         return null;
     }

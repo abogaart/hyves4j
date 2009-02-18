@@ -92,9 +92,7 @@ public class XMLResponse extends H4jResponse {
                 }
             }
             errorMessage += "\nOriginal response xml\n";
-            StringBuffer sb = new StringBuffer();
-            XMLUtil.prettyPrintXML(rootElement, sb, 0);
-            errorMessage += sb.toString();
+            errorMessage += XMLUtil.prettyPrintXML(rootElement);
             
             logger.error(errorCode);
             logger.error(errorMessage);
