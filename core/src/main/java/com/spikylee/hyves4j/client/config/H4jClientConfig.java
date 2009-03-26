@@ -19,7 +19,10 @@ package com.spikylee.hyves4j.client.config;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.oauth.OAuth;
 import net.oauth.OAuth.Parameter;
@@ -28,34 +31,37 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class H4jClientConfig implements Serializable {
     private static final long serialVersionUID = 2738064941695337596L;
-    
+
     private URL propertiesFileURL;
     private String consumerName;
-    
+
     private String requestToken;
-    private String accessToken; 
+    private String accessToken;
     private String tokenSecret;
-    
+
     private String expirationType = "user";
-    
+
     private boolean fancyLayout = false;
-    
+
     private List<String> methods = new ArrayList<String>();
-    private List<Parameter> callbackParameters = new ArrayList<Parameter>();
-    
+    // Serializable workaround for non-serializable class OAuth.Parameter
+    private Map<String, String> callbackParameters = new HashMap<String, String>();
+
     public H4jClientConfig() {
         String propertiesFileSource = "/consumer.properties";
-        propertiesFileURL = H4jClientConfig.class.getResource(propertiesFileSource);
+        propertiesFileURL = H4jClientConfig.class
+                .getResource(propertiesFileSource);
         consumerName = "hyves";
     }
-    
+
     public H4jClientConfig(String consumerName, URL propertiesFileURL) {
         this.consumerName = consumerName;
         this.propertiesFileURL = propertiesFileURL;
     }
-    
-    public H4jClientConfig(String consumerName, String propertiesFileSource){
-        propertiesFileURL = H4jClientConfig.class.getClassLoader().getResource(propertiesFileSource);
+
+    public H4jClientConfig(String consumerName, String propertiesFileSource) {
+        propertiesFileURL = H4jClientConfig.class.getClassLoader().getResource(
+                propertiesFileSource);
     }
 
     public URL getPropertiesFileURL() {
@@ -97,13 +103,13 @@ public class H4jClientConfig implements Serializable {
     public void setTokenSecret(String tokenSecret) {
         this.tokenSecret = tokenSecret;
     }
-    
+
     public void addMethod(String method) {
-        if(!methods.contains(method)) {
+        if (!methods.contains(method)) {
             methods.add(method);
         }
     }
-    
+
     public List<String> getMethods() {
         return methods;
     }
@@ -119,18 +125,15 @@ public class H4jClientConfig implements Serializable {
     public void setExpirationType(String expirationType) {
         this.expirationType = expirationType;
     }
-    
+
     @Override
     public String toString() {
-    	return new ToStringBuilder(this).
-    	append("consumerName", consumerName).
-        append("requestToken", requestToken).
-        append("accessToken", accessToken).
-        append("tokenSecret", tokenSecret).
-        append("expirationType", expirationType).
-        append("methods size", methods).
-        append("propertiesFileURL", propertiesFileURL).
-    	toString();
+        return new ToStringBuilder(this).append("consumerName", consumerName)
+                .append("requestToken", requestToken).append("accessToken",
+                        accessToken).append("tokenSecret", tokenSecret).append(
+                        "expirationType", expirationType).append(
+                        "methods size", methods).append("propertiesFileURL",
+                        propertiesFileURL).toString();
     }
 
     public boolean isFancyLayout() {
@@ -142,22 +145,29 @@ public class H4jClientConfig implements Serializable {
     }
 
     public List<Parameter> getCallbackParameters() {
-        return callbackParameters;
+        List<Parameter> list = new ArrayList<Parameter>(callbackParameters
+                .size());
+        for (Entry<String, String> entry : callbackParameters.entrySet()) {
+            list.add(new Parameter(entry.getKey(), entry.getValue()));
+        }
+        return list;
     }
 
-    public void setCallbackParameters(List<Parameter> callbackParameters) {
-        this.callbackParameters = callbackParameters;
+    public void setCallbackParameters(List<Parameter> parameters) {
+        parameters.clear();
+        for (Parameter p : parameters) {
+            callbackParameters.put(p.getKey(), p.getValue());
+        }
     }
 
     public void setCallbackParameters(String... params) {
-        callbackParameters = OAuth.newList(params);
+        setCallbackParameters(OAuth.newList(params));
     }
 
     public void addCallbackParameter(String key, String value) {
-        Parameter param = new Parameter(key, value);
-        if(!callbackParameters.contains(param)) {
-            callbackParameters.add(param);
+        if (!callbackParameters.containsKey(key)) {
+            callbackParameters.put(key, value);
         }
     }
-    
+
 }

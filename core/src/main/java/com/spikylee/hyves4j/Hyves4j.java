@@ -23,7 +23,7 @@ import java.util.Properties;
 import net.oauth.ConsumerProperties;
 import net.oauth.OAuthConsumer;
 import net.oauth.client.OAuthClient;
-import net.oauth.client.httpclient3.HttpClient3;
+import net.oauth.client.httpclient4.HttpClient4;
 
 import org.apache.commons.httpclient.RedirectException;
 import org.slf4j.Logger;
@@ -64,9 +64,10 @@ public class Hyves4j {
 
     public Hyves4j(H4jClient client) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Creating new Hyves4j:\n - Config is " + client.getConfig().toString() 
-                    + "\n - Consumer is " + client.getConsumer().toString() 
-                    + "\n - Accessor is " + client.getAccessor().toString());
+            logger.debug("Creating new Hyves4j:\n - Config is "
+                    + client.getConfig().toString() + "\n - Consumer is "
+                    + client.getConsumer().toString() + "\n - Accessor is "
+                    + client.getAccessor().toString());
         }
         this.client = client;
         transport = new XMLTransport(client);
@@ -96,8 +97,8 @@ public class Hyves4j {
         return new H4jAuth(client, transport);
     }
 
-    /* 
-     * Create client helpers 
+    /*
+     * Create client helpers
      */
     public static H4jClient createAnonymousClient() {
         return new H4jClient(new H4jClientConfig());
@@ -109,17 +110,20 @@ public class Hyves4j {
         return new H4jClient(config);
     }
 
-    public static H4jClient createAnonymousClient(String consumerName, URL propertiesFileURL) {
-        H4jClientConfig config = new H4jClientConfig(consumerName, propertiesFileURL);
+    public static H4jClient createAnonymousClient(String consumerName,
+            URL propertiesFileURL) {
+        H4jClientConfig config = new H4jClientConfig(consumerName,
+                propertiesFileURL);
         return new H4jClient(config);
     }
 
     /**
      * Create a new authenticated client. Since this method might throw a
-     * RedirectException the user should keep a reference to the
-     * ClientConfig, since it contains the tokenSecret.
+     * RedirectException the user should keep a reference to the ClientConfig,
+     * since it contains the tokenSecret.
      */
-    public static H4jClient createAuthenticatedClient(H4jClientConfig config) throws H4jException, RedirectException {
+    public static H4jClient createAuthenticatedClient(H4jClientConfig config)
+            throws H4jException, RedirectException {
         H4jClient authClient = new H4jClient(config);
         H4jTransport transport = new XMLTransport(authClient);
         H4jAuth auth = new H4jAuth(authClient, transport);
@@ -130,7 +134,8 @@ public class Hyves4j {
     /**
      * Simple http-client pool.
      */
-    public static final OAuthClient HTTP_CLIENT = new OAuthClient(new HttpClient3());
+    public static final OAuthClient HTTP_CLIENT = new OAuthClient(
+            new HttpClient4());
 
     /**
      * Pool of consumer configurations
@@ -139,13 +144,15 @@ public class Hyves4j {
         private static Properties consumerProperties = null;
         private static ConsumerProperties consumers = null;
 
-        public static OAuthConsumer getConsumer(String name, URL propertiesFileURL) {
+        public static OAuthConsumer getConsumer(String name,
+                URL propertiesFileURL) {
 
             OAuthConsumer consumer = null;
             try {
                 synchronized (Hyves4j.Consumers.class) {
                     if (consumers == null) {
-                        consumerProperties = ConsumerProperties.getProperties(propertiesFileURL);
+                        consumerProperties = ConsumerProperties
+                                .getProperties(propertiesFileURL);
                         consumers = new ConsumerProperties(consumerProperties);
                     }
                 }
