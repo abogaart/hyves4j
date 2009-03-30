@@ -17,7 +17,6 @@
 package com.spikylee.hyves4j;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 import net.oauth.ConsumerProperties;
@@ -25,12 +24,10 @@ import net.oauth.OAuthConsumer;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.httpclient4.HttpClient4;
 
-import org.apache.commons.httpclient.RedirectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.spikylee.hyves4j.client.H4jClient;
-import com.spikylee.hyves4j.client.config.H4jClientConfig;
 import com.spikylee.hyves4j.interfaces.auth.H4jAuth;
 import com.spikylee.hyves4j.interfaces.cities.H4jCities;
 import com.spikylee.hyves4j.interfaces.console.H4jConsole;
@@ -40,8 +37,7 @@ import com.spikylee.hyves4j.transport.H4jTransport;
 import com.spikylee.hyves4j.transport.XMLTransport;
 
 /**
- * Main entry point for the Hyves4j API. This class sets up transport/response
- * and returns interfaces to the Hyves API.
+ * Main entry point for the Hyves4j API. This class sets up transport/response and returns interfaces to the Hyves API.
  * 
  * @author Arthur Bogaart
  */
@@ -58,16 +54,14 @@ public class Hyves4j {
     private H4jClient client;
     private H4jTransport transport;
 
-    public Hyves4j() {
-        this(createAnonymousClient());
+    public Hyves4j() throws IOException {
+        this(H4jClientFactory.createAnonymousClient());
     }
 
     public Hyves4j(H4jClient client) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Creating new Hyves4j:\n - Config is "
-                    + client.getConfig().toString() + "\n - Consumer is "
-                    + client.getConsumer().toString() + "\n - Accessor is "
-                    + client.getAccessor().toString());
+            logger.debug("Creating new Hyves4j:\n - Config is " + client.getConfig().toString() + "\n - Consumer is "
+                    + client.getConsumer().toString() + "\n - Accessor is " + client.getAccessor().toString());
         }
         this.client = client;
         transport = new XMLTransport(client);
@@ -97,63 +91,24 @@ public class Hyves4j {
         return new H4jAuth(client, transport);
     }
 
-    /*
-     * Create client helpers
-     */
-    public static H4jClient createAnonymousClient() {
-        return new H4jClient(new H4jClientConfig());
-    }
-
-    public static H4jClient createAnonymousClient(String consumerName) {
-        H4jClientConfig config = new H4jClientConfig();
-        config.setConsumerName(consumerName);
-        return new H4jClient(config);
-    }
-
-    public static H4jClient createAnonymousClient(String consumerName,
-            URL propertiesFileURL) {
-        H4jClientConfig config = new H4jClientConfig(consumerName,
-                propertiesFileURL);
-        return new H4jClient(config);
-    }
-
-    /**
-     * Create a new authenticated client. Since this method might throw a
-     * RedirectException the user should keep a reference to the ClientConfig,
-     * since it contains the tokenSecret.
-     */
-    public static H4jClient createAuthenticatedClient(H4jClientConfig config)
-            throws H4jException, RedirectException {
-        H4jClient authClient = new H4jClient(config);
-        H4jTransport transport = new XMLTransport(authClient);
-        H4jAuth auth = new H4jAuth(authClient, transport);
-        auth.getAccessToken();
-        return authClient;
-    }
-
     /**
      * Simple http-client pool.
      */
-    public static final OAuthClient HTTP_CLIENT = new OAuthClient(
-            new HttpClient4());
+    public static final OAuthClient HTTP_CLIENT = new OAuthClient(new HttpClient4());
 
     /**
      * Pool of consumer configurations
      */
     public static class Consumers {
-        private static Properties consumerProperties = null;
         private static ConsumerProperties consumers = null;
 
-        public static OAuthConsumer getConsumer(String name,
-                URL propertiesFileURL) {
+        public static OAuthConsumer getConsumer(String name, Properties properties) {
 
             OAuthConsumer consumer = null;
             try {
                 synchronized (Hyves4j.Consumers.class) {
                     if (consumers == null) {
-                        consumerProperties = ConsumerProperties
-                                .getProperties(propertiesFileURL);
-                        consumers = new ConsumerProperties(consumerProperties);
+                        consumers = new ConsumerProperties(properties);
                     }
                 }
                 consumer = consumers.getConsumer(name);

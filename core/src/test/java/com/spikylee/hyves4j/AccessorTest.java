@@ -16,19 +16,26 @@
 
 package com.spikylee.hyves4j;
 
+import java.io.IOException;
+
 import net.oauth.OAuthAccessor;
 
 //TODO: write AuthAccessor test
 public class AccessorTest extends AbstractHyves4jTest {
-	
-	public void testPublicAccessor() {
-	    
-		OAuthAccessor accessor = Hyves4j.createAnonymousClient("hyves", consumerPropertiesURL).getAccessor();
-		assertNotNull(accessor);
-		assertEquals(accessor.accessToken, null);
-		assertEquals(accessor.requestToken, null);
-		assertEquals(accessor.tokenSecret, null);
-		
-	}
-	
+
+    public void testPublicAccessor() {
+
+        OAuthAccessor accessor;
+        try {
+            accessor = H4jClientFactory.createAnonymousClient("hyves", consumerPropertiesURL).getAccessor();
+            assertNotNull(accessor);
+            assertEquals(accessor.accessToken, null);
+            assertEquals(accessor.requestToken, null);
+            assertEquals(accessor.tokenSecret, null);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed", e);
+        }
+
+    }
+
 }

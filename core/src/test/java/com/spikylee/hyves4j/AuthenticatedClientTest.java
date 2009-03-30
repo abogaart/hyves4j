@@ -33,21 +33,23 @@ import com.spikylee.hyves4j.client.config.H4jClientConfig;
 import com.spikylee.hyves4j.interfaces.auth.H4jAuth;
 
 public class AuthenticatedClientTest extends AbstractHyves4jTest {
-    
+
     private H4jClient client = null;
-    
+
     public void testAuthenticatedClient() {
-        H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
+        H4jClientConfig config = new H4jClientConfig("hyves");
         config.setAccessToken(properties.getProperty("accesstoken"));
         config.setTokenSecret(properties.getProperty("tokensecret"));
         config.addMethod("users.get");
-        
+
         try {
-            client = Hyves4j.createAuthenticatedClient(config);
+            client = H4jClientFactory.createAuthenticatedClient(config, consumerPropertiesURL);
         } catch (H4jException e) {
             e.printStackTrace();
         } catch (RedirectException e) {
             System.err.println("go to " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         assertNotNull(client);
         assertNotNull(client.getAccessor());
@@ -56,17 +58,17 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
         assertNull(client.getAccessor().getRequestToken());
         assertEquals(properties.getProperty("accesstoken"), client.getAccessor().getAccessToken());
         assertEquals(properties.getProperty("tokensecret"), client.getAccessor().getTokenSecret());
-        
+
         Hyves4j h4j = new Hyves4j(client);
         assertNotNull(h4j);
     }
 
     public void testNewAuthenticatedClient() {
-        H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
+        H4jClientConfig config = new H4jClientConfig("hyves");
         config.addMethod("auth.revokeSelf");
 
         try {
-            client = Hyves4j.createAuthenticatedClient(config);
+            client = H4jClientFactory.createAuthenticatedClient(config, consumerPropertiesURL);
         } catch (H4jException e) {
             e.printStackTrace();
         } catch (RedirectException e) {
@@ -74,33 +76,39 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
             assertNotNull(oauthToken, "Oauthtoken shouldn't be null");
             config.setAccessToken(oauthToken);
             try {
-                client = Hyves4j.createAuthenticatedClient(config);
+                client = H4jClientFactory.createAuthenticatedClient(config, consumerPropertiesURL);
             } catch (RedirectException e1) {
                 e1.printStackTrace();
                 fail("Shouldn't be redirected anymore.");
             } catch (H4jException e1) {
                 e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        
+
         assertNotNull(client);
         assertNotNull(client.getAccessor().getAccessToken());
         assertNotNull(client.getAccessor().getTokenSecret());
-        
-        //now revoke again
+
+        // now revoke again
         H4jAuth auth = new Hyves4j(client).getAuth();
         try {
-            int numberDeleted= auth.revokeSelf();
+            int numberDeleted = auth.revokeSelf();
             assertEquals(1, numberDeleted);
         } catch (H4jException e) {
             fail(e);
         }
     }
-    
+
     /**
-     * Kind of tricky: open the redirect url in a webclient and simulate logging in and accepting the request,
-     * than parsing the redirect url to fetch the authToken.
-     * @param url Redirect url for authtoken of requested methods
+     * Kind of tricky: open the redirect url in a webclient and simulate logging in and accepting the request, than
+     * parsing the redirect url to fetch the authToken.
+     * 
+     * @param url
+     *            Redirect url for authtoken of requested methods
      * @return a valid authToken or null if not found
      */
     private String getOauthToken(String url) {
@@ -110,31 +118,31 @@ public class AuthenticatedClientTest extends AbstractHyves4jTest {
         HtmlPage page1 = null;
         try {
             page1 = (HtmlPage) webClient.getPage(url);
-            
-            // Get the form that we are dealing with and within that form, 
+
+            // Get the form that we are dealing with and within that form,
             // find the submit button and the field that we want to change.
             HtmlForm form = page1.getFormByName("loginform");
 
             form.getInputByName("auth_username").setValueAttribute(properties.getProperty("username"));
             form.getInputByName("auth_password").setValueAttribute(properties.getProperty("password"));
-            page1 = (HtmlPage)form.getInputByName("btnLogin").click();
-            
+            page1 = (HtmlPage) form.getInputByName("btnLogin").click();
+
             form = page1.getForms().get(1);
             HtmlInput field = form.getInputByName("acceptButton");
             if (field != null) {
-                page1 = (HtmlPage)field.click();
+                page1 = (HtmlPage) field.click();
                 URL callbackUrl = page1.getWebResponse().getUrl();
                 String q = callbackUrl.getQuery();
                 StringTokenizer tokenizer = new StringTokenizer(q, "&");
-                while(tokenizer.hasMoreTokens()) {
+                while (tokenizer.hasMoreTokens()) {
                     String tkn = tokenizer.nextToken();
-                    if(tkn.indexOf("oauth_token") > -1) {
+                    if (tkn.indexOf("oauth_token") > -1) {
                         String oauthToken = tkn.substring("oauth_token=".length());
                         return oauthToken;
                     }
                 }
             }
-            
+
         } catch (FailingHttpStatusCodeException e1) {
             e1.printStackTrace();
             fail("Failed status code: " + e1.getStatusCode() + " msg: " + e1.getMessage());

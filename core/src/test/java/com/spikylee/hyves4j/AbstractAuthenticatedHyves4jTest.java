@@ -22,16 +22,17 @@ import com.spikylee.hyves4j.client.config.H4jClientConfig;
 public abstract class AbstractAuthenticatedHyves4jTest extends AbstractHyves4jTest {
     protected Hyves4j h4j = null;
 
+    @Override
     public void setUp() {
         super.setUp();
-        H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
+        H4jClientConfig config = new H4jClientConfig("hyves");
         config.setAccessToken(properties.getProperty("accesstoken"));
         config.setTokenSecret(properties.getProperty("tokensecret"));
         config.addMethod("users.get");
 
         H4jClient client = null;
         try {
-            client = Hyves4j.createAuthenticatedClient(config);
+            client = H4jClientFactory.createAuthenticatedClient(config, consumerPropertiesURL);
         } catch (Exception e) {
             fail("Test setup failed, unable to instatiate authenticated client");
         }

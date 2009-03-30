@@ -16,17 +16,23 @@
 
 package com.spikylee.hyves4j;
 
+import java.io.IOException;
+
 import com.spikylee.hyves4j.client.H4jClient;
 
 public class Hyves4jTest extends AbstractHyves4jTest {
-	
-	public void testPublicHyves4j () {
-		Hyves4j h4j = null;
-		H4jClient client = Hyves4j.createAnonymousClient("hyves", consumerPropertiesURL);
-		h4j = new Hyves4j(client);
-		assertNotNull(h4j.getCities());
-		assertNotNull(h4j.getConsole());
-		assertNotNull(h4j.getUsers());
-	}
-	
+
+    public void testPublicHyves4j() {
+        try {
+            H4jClient client = H4jClientFactory.createAnonymousClient("hyves", consumerPropertiesURL);
+            Hyves4j h4j = new Hyves4j(client);
+            assertNotNull(h4j.getCities());
+            assertNotNull(h4j.getConsole());
+            assertNotNull(h4j.getUsers());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 }

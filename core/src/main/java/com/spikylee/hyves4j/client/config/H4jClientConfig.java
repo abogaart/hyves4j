@@ -17,7 +17,6 @@
 package com.spikylee.hyves4j.client.config;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class H4jClientConfig implements Serializable {
     private static final long serialVersionUID = 2738064941695337596L;
 
-    private URL propertiesFileURL;
     private String consumerName;
 
     private String requestToken;
@@ -47,29 +45,8 @@ public class H4jClientConfig implements Serializable {
     // Serializable workaround for non-serializable class OAuth.Parameter
     private Map<String, String> callbackParameters = new HashMap<String, String>();
 
-    public H4jClientConfig() {
-        String propertiesFileSource = "/consumer.properties";
-        propertiesFileURL = H4jClientConfig.class
-                .getResource(propertiesFileSource);
-        consumerName = "hyves";
-    }
-
-    public H4jClientConfig(String consumerName, URL propertiesFileURL) {
+    public H4jClientConfig(String consumerName) {
         this.consumerName = consumerName;
-        this.propertiesFileURL = propertiesFileURL;
-    }
-
-    public H4jClientConfig(String consumerName, String propertiesFileSource) {
-        propertiesFileURL = H4jClientConfig.class.getClassLoader().getResource(
-                propertiesFileSource);
-    }
-
-    public URL getPropertiesFileURL() {
-        return propertiesFileURL;
-    }
-
-    public void setPropertiesFileURL(URL propertiesFileURL) {
-        this.propertiesFileURL = propertiesFileURL;
     }
 
     public String getConsumerName() {
@@ -128,12 +105,9 @@ public class H4jClientConfig implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("consumerName", consumerName)
-                .append("requestToken", requestToken).append("accessToken",
-                        accessToken).append("tokenSecret", tokenSecret).append(
-                        "expirationType", expirationType).append(
-                        "methods size", methods).append("propertiesFileURL",
-                        propertiesFileURL).toString();
+        return new ToStringBuilder(this).append("consumerName", consumerName).append("requestToken", requestToken)
+                .append("accessToken", accessToken).append("tokenSecret", tokenSecret).append("expirationType",
+                        expirationType).append("methods size", methods).toString();
     }
 
     public boolean isFancyLayout() {
@@ -145,8 +119,7 @@ public class H4jClientConfig implements Serializable {
     }
 
     public List<Parameter> getCallbackParameters() {
-        List<Parameter> list = new ArrayList<Parameter>(callbackParameters
-                .size());
+        List<Parameter> list = new ArrayList<Parameter>(callbackParameters.size());
         for (Entry<String, String> entry : callbackParameters.entrySet()) {
             list.add(new Parameter(entry.getKey(), entry.getValue()));
         }
