@@ -30,19 +30,19 @@ public class H4jCities extends H4jInterface {
     public H4jCities(H4jClient client, H4jTransport transport) {
         super(client, transport);
     }
-    
+
     public City getCity(String cityIds) throws H4jException {
         List<City> cities = get(cityIds);
-        if(cities == null)
+        if (cities == null || cities.size() == 0)
             return null;
-        else 
-            return cities.get(0); 
+        else
+            return cities.get(0);
     }
-    
+
     public List<City> get(String cityIds) throws H4jException {
         CitiesGetMethod method = new CitiesGetMethod(cityIds);
         transport.executeMethod(method);
         return method.getResult();
     }
-    
+
 }
