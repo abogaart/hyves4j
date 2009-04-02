@@ -33,6 +33,7 @@ import net.oauth.OAuth.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.spikylee.hyves4j.H4jClientFactory;
 import com.spikylee.hyves4j.H4jException;
 import com.spikylee.hyves4j.Hyves4j;
 import com.spikylee.hyves4j.client.H4jClient;
@@ -47,7 +48,7 @@ public final class HyvesConsole extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        //Get Console form parameters
+        // Get Console form parameters
         String action = request.getParameter("doAction");
         String oauthToken = request.getParameter("oauthToken");
         String oauthTokenSecret = request.getParameter("oauthTokenSecret");
@@ -62,9 +63,9 @@ public final class HyvesConsole extends HttpServlet {
             }
         }
 
-        //Create Hyves4j config, client and Hyves4j
-        URL consumerPropertiesURL = getClass().getResource("/consumer.properties");
-        H4jClientConfig config = new H4jClientConfig("hyves", consumerPropertiesURL);
+        // Create Hyves4j config, client and Hyves4j
+        URL propertiesURL = getClass().getResource("/consumer.properties");
+        H4jClientConfig config = new H4jClientConfig("hyves");
         if (fancyLayout != null) {
             config.setFancyLayout(true);
         }
@@ -73,34 +74,39 @@ public final class HyvesConsole extends HttpServlet {
         if (oauthToken != null && oauthToken.length() > 0 && oauthTokenSecret != null && oauthTokenSecret.length() > 0) {
             config.setAccessToken(oauthToken);
             config.setTokenSecret(oauthTokenSecret);
-            client = new H4jClient(config);
+            try {
+                client = H4jClientFactory.createAuthenticatedClient(config, propertiesURL);
+            } catch (H4jException e) {
+                e.printStackTrace();
+            }
         } else {
-            client = new H4jClient(config);
+            client = H4jClientFactory.createAnonymousClient(config.getConsumerName(), propertiesURL);
         }
         Hyves4j h4j = new Hyves4j(client);
 
         if (action != null && "continue".equals(action)) {
-            //Execute method
+            // Execute method
             String result;
             try {
                 result = h4j.getConsole().execute(haMethod, responseFields, params);
             } catch (H4jException e) {
                 throw new ServletException(e.getErrorCode() + "\n" + e.getErrorMessage());
             }
-            //print as text
+            // print as text
             result = result.replaceAll("<", "&lt;");
             result = result.replaceAll(">", "&gt;");
             result = result.replaceAll("\n", "<br/>");
             result = result.replaceAll(" ", "&#160;");
             response.getWriter().append(result);
         } else {
-            //Show Console form
+            // Show Console form
             PrintWriter w = response.getWriter();
             w.append("<html><head>");
             w.append("<script language=\"javascript\" type=\"text/javascript\" src=\"resources/js/formHelper.js\">");
             w.append("</head><body>");
             w.append("<h1>Hyves4j Console</h1>");
-            w.append("<form name=\"consoleForm\" id=\"consoleForm\" onSubmit=\"handlePost(this.id, 'resultDiv');return false;\">");
+            w
+                    .append("<form name=\"consoleForm\" id=\"consoleForm\" onSubmit=\"handlePost(this.id, 'resultDiv');return false;\">");
             w.append("<table border=\"0\"><tr><td><table border=\"0\">");
 
             addLabel(w, "url", h4j.HYVES_API);
@@ -137,13 +143,14 @@ public final class HyvesConsole extends HttpServlet {
                 addInput(w, "value" + i, "");
                 w.append("</td></tr>");
             }
-            w.append("</table></td></tr></table><input type=\"submit\" value=\"go\"/><input type=\"hidden\" name=\"doAction\" value=\"continue\" /></form>");
+            w
+                    .append("</table></td></tr></table><input type=\"submit\" value=\"go\"/><input type=\"hidden\" name=\"doAction\" value=\"continue\" /></form>");
             w.append("<br/><h3>Result</h3><p><div id=\"resultDiv\"></div></p>");
             w.append("</body></html>");
         }
     }
-    
-    //Append new table row + text input
+
+    // Append new table row + text input
     private void addRowWithInput(PrintWriter w, String name, String value) throws IOException {
         if (value == null)
             value = "";
@@ -152,13 +159,13 @@ public final class HyvesConsole extends HttpServlet {
         addInput(w, name, value);
         w.append("</td></tr>");
     }
-    
-    //Append text input
+
+    // Append text input
     private void addInput(PrintWriter w, String name, String value) throws IOException {
         w.append("<input type=\"text\" name=\"" + name + "\" id=\"" + name + "\" value=\"" + value + "\"");
     }
-    
-    //Append table row + label
+
+    // Append table row + label
     private void addLabel(PrintWriter w, String name, String value) throws IOException {
         w.append("<tr><td>");
         w.append(name + "</td><td>" + value + "</td></tr>");
