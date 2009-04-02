@@ -16,7 +16,7 @@
   <dependencies>
     <dependency>
       <groupId>com.spikylee.hyves4j</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>h4j-core</artifactId>
       <version>1.01.00-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
