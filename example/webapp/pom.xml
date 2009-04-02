@@ -4,7 +4,7 @@
 
   <parent>
     <groupId>com.spikylee.hyves4j</groupId>
-    <artifactId>hyves4j-api</artifactId>
+    <artifactId>hyves4j-parent</artifactId>
     <version>1.01.00-SNAPSHOT</version>
   </parent>
   
