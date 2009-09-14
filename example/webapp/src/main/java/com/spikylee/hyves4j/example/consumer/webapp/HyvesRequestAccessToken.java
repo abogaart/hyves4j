@@ -90,6 +90,8 @@ public final class HyvesRequestAccessToken extends HttpServlet {
                 w.append("AccessToken: " + config.getAccessToken()).append("<br/>");
                 w.append("TokenSecret: " + config.getTokenSecret());
                 w.append("</p>");
+                
+                w.append("<p>Create a <a href=\"request\">new</a> acces token</p>");
 
                 resetConfig(config);
 
